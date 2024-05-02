@@ -1,0 +1,15 @@
+.pera_style{
+    color: #11175D;
+    font-size: 20.641px;
+    font-weight: 400;
+    opacity: 0.5;
+    margin-top: 13px;
+    margin-bottom: 61px;
+}
+.reg_img {
+    object-fit: cover;
+}
+.reg_img img{
+    width: 100%;
+    height: 100%;
+}

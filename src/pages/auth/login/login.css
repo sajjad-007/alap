@@ -1,0 +1,30 @@
+.log_box{
+    border: 0.834px solid #c7c6f4;
+}
+.log_box svg {
+    font-size: 24px;
+    margin-right: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.log_main span{
+    color: #03014C;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: normal;
+    margin-left: 44px;
+}
+.log_main span a {
+    color: #EA6C00;
+    font-weight: 700;
+
+}
+.log_img{
+    object-fit: cover;
+    overflow: hidden;
+}
+.log_img img {
+    height: 100%;
+    width: 100%;
+}

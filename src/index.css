@@ -1,0 +1,20 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: "Open Sans", sans-serif;
+}
+ul,ol{
+    list-style-type: none;
+}
+a{
+    display: inline-block;
+    text-decoration: none;
+}
+#standard-basic{
+    color: #11175D;
+    width: 368.092px;
+    font-family: "Nunito", sans-serif;
+    font-size: 20.641px;
+    font-weight: 600;
+}
