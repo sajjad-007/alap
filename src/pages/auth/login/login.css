@@ -28,3 +28,15 @@
     height: 100%;
     width: 100%;
 }
+.modal_exit {
+    position: relative;
+}
+.modal_exit svg{
+    position: absolute;
+    left: 368px;
+    top: -87px;
+    color: #5f34f5;
+    cursor: pointer;
+    font-size: 34px;
+
+}
