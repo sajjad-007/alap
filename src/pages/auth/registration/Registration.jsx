@@ -42,22 +42,22 @@ const Registration = () => {
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={0}>
           <Grid item xs={6} style={{display:'flex', alignItems:'center',justifyContent:'center'}}>
-            <div className='log_main'>
+            <div className='log_main' style={{marginTop:'20px', marginBottom:'60px',}}>
               <LogHead level="h2">
                 Get started with easily register
               </LogHead>
               <Pera styling="pera_style" text="Free register and you can enjoy it"/>
-              <div className='log_input' style={{display:'flex',flexDirection:'column',rowGap:'60px',marginTop:"32px"}}>
+              <div className='log_input' style={{display:'flex',flexDirection:'column',rowGap:'35px',marginTop:"32px"}}>
                 <InputBox id="standard-basic" label="Email Address" variant="outlined" />
                 <InputBox id="standard-basic" label="Full Name" variant="outlined"/>
                 <InputBox id="standard-basic" label="Password" variant="outlined"/>
               </div>
               <div className="log_btn">
-                <BootstrapButton variant="contained" style={{borderRadius:'86px', width:'368px'}}>
+                <BootstrapButton variant="contained" style={{borderRadius:'86px', width:'350px', marginTop:'40px',marginBottom:'30px'}}>
                   Sign Up
                 </BootstrapButton>
               </div>
-              <span>Already have an account ? <Link to='/'>Sign In</Link></span>
+              <span style={{marginTop:'30px'}}>Already have an account ? <Link to='/'>Sign In</Link></span>
             </div>
           </Grid>
           <Grid item xs={6} >

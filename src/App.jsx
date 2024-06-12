@@ -11,6 +11,7 @@ import Setting from "./pages/setting/Setting";
 import Error from "./pages/error/Error";
 import Login from "./pages/auth/login/Login";
 import Registration from "./pages/auth/registration/Registration";
+import Notification from "./pages/notification/Notification";
 
 function App() {
   const router = createBrowserRouter(
@@ -19,7 +20,8 @@ function App() {
         <Route element={<RootLayout/>}>
           <Route path="/home" element={<Home/>}/>
           <Route path="/message" element={<Message/>}/>
-          <Route path="/setting" element={<Setting/>}/>
+          <Route path="/settings" element={<Setting/>}/>
+          <Route path="/notification" element={<Notification/>}/>
         </Route>
           <Route path="/" element={<Login/>}/>
           <Route path="/registration" element={<Registration/>}/>

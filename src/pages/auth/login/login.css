@@ -8,7 +8,7 @@
     align-items: center;
 }
 
-.log_main span{
+.log_main span {
     color: #03014C;
     font-size: 14px;
     font-weight: 400;
@@ -20,7 +20,7 @@
     font-weight: 700;
 
 }
-.log_img{
+.log_img {
     object-fit: cover;
     overflow: hidden;
 }

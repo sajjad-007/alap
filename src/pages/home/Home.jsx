@@ -1,8 +1,12 @@
 import React from 'react'
+// import CartList from '../../components/cartList/CartList'
+import CartList from '../../components/cartList/CartList'
 
 const Home = () => {
   return (
-    <div>this is my home page </div>
+    <div style={{paddingTop:'25px'}}>
+      <CartList/>
+    </div>
   )
 }
 
