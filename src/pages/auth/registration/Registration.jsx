@@ -9,8 +9,8 @@ import Images from '../../../components/utilities/Images';
 import Pera from '../../../components/utilities/Pera';
 import RegImg from '../../../assets/images/reg_img.jpg';
 import './reg.css'
-
-
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 
 const LogHead = styled(Typography)({
@@ -36,26 +36,99 @@ const BootstrapButton = styled(Button)({
     boxShadow: 'none',
   },
 });
+const emailregx =  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
+
 const Registration = () => {
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      fullName: '',
+      password: '',
+    },
+    validationSchema: Yup.object({
+      fullName: Yup.string()
+        .max(15, 'Must be 15 characters or less')
+        .min(2, 'Minimum 2 characters required')
+        .required('Kindly enter your full name'),
+      password: Yup.string()
+        .max(10, 'Must be 10 characters or less')
+        .min(5, 'Minimum 5 characters required')
+        .required('Kindly enter your password'),
+      email: Yup.string()
+      .email('Invalid email address')
+      .matches(emailregx , 'please check your regx')
+      .required('Kindly enter your email'),
+    }),
+    onSubmit: (values,action) => {
+      console.log(values);
+      action.resetForm()
+    },
+  });
   return (
     <div>
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={0}>
           <Grid item xs={6} style={{display:'flex', alignItems:'center',justifyContent:'center'}}>
-            <div className='log_main' style={{marginTop:'20px', marginBottom:'60px',}}>
+            <div className='log_main' style={{marginTop:'20px', marginBottom:'60px', padding:'20px'}}>
               <LogHead level="h2">
                 Get started with easily register
               </LogHead>
               <Pera styling="pera_style" text="Free register and you can enjoy it"/>
-              <div className='log_input' style={{display:'flex',flexDirection:'column',rowGap:'35px',marginTop:"32px"}}>
-                <InputBox id="standard-basic" label="Email Address" variant="outlined" />
-                <InputBox id="standard-basic" label="Full Name" variant="outlined"/>
-                <InputBox id="standard-basic" label="Password" variant="outlined"/>
-              </div>
-              <div className="log_btn">
-                <BootstrapButton variant="contained" style={{borderRadius:'86px', width:'350px', marginTop:'40px',marginBottom:'30px'}}>
-                  Sign Up
-                </BootstrapButton>
+              <div className='log_input'>
+                <form onSubmit={formik.handleSubmit} style={{display:'flex',  flexDirection:'column',rowGap:'35px',marginTop:"32px"}}>
+                  <div>
+                    <InputBox 
+                      id="standard-basic" 
+                      label="Email Address" 
+                      variant="outlined" 
+                      name='email' 
+                      type='email' 
+                      onChange={formik.handleChange} 
+                      value={formik.values.email} 
+                      style={{marginBottom:'30px'}}      
+                    />
+                    {formik.touched.email && formik.errors.email ? (
+                        <div style={{color:'red',padding:'5px'}}>{formik.errors.email}</div>
+                      ) : null
+                    }
+                  </div>
+                  <div>
+                    <InputBox 
+                      id="standard-basic2" 
+                      label="fullName" 
+                      name = 'fullName'
+                      type = 'text'
+                      onChange = {formik.handleChange}
+                      value = {formik.values.fullName}
+                      variant="outlined"
+                    />
+                    {formik.touched.fullName && formik.errors.fullName ? (
+                        <div style={{color:'red',padding:'5px'}}>{formik.errors.fullName}</div>
+                      ) : null
+                    }
+                  </div>
+                  <div>
+                    <InputBox 
+                      id="standard-basic3"
+                      name = 'password' 
+                      label="Password"
+                      type='password' 
+                      onChange = {formik.handleChange}
+                      value = {formik.values.password}
+                      variant="outlined"
+                    />
+                    {formik.touched.password && formik.errors.password ? (
+                        <div style={{color:'red',padding:'5px'}}>{formik.errors.password}</div>
+                      ) : null
+                    }
+                  </div>
+                  <div className="log_btn">
+                    <BootstrapButton type='submit' variant="contained" style={{borderRadius:'86px', width:'350px', marginTop:'10px',marginBottom:'30px'}}>
+                      Sign Up
+                    </BootstrapButton>
+                  </div>
+                </form>
               </div>
               <span style={{marginTop:'30px'}}>Already have an account ? <Link to='/'>Sign In</Link></span>
             </div>
