@@ -11,7 +11,8 @@ import RegImg from '../../../assets/images/reg_img.jpg';
 import './reg.css'
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, updateProfile} from "firebase/auth";
+import { getDatabase, ref, set } from "firebase/database";
 
 const LogHead = styled(Typography)({
   fontSize: 34,
@@ -39,7 +40,11 @@ const BootstrapButton = styled(Button)({
 const emailregx =  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
 
+
 const Registration = () => {
+  const auth = getAuth();
+  const db = getDatabase();
+
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -61,9 +66,31 @@ const Registration = () => {
       .required('Kindly enter your email'),
     }),
     onSubmit: (values,action) => {
-      console.log(values);
+      // console.log(values);
       action.resetForm()
-    },
+      createUserWithEmailAndPassword(auth, values.email, values.password)
+        .then((userCredential) => {
+          sendEmailVerification(auth.currentUser)
+            .then(() => {
+              console.log('email sent ');
+              updateProfile(auth.currentUser, {
+                displayName: values.fullName, 
+              }).then(() => {
+                // console.log(userCredential);
+                set(ref(db, 'users/' + userCredential.user.uid), {
+                  fullName: userCredential.user.displayName,
+                  email: userCredential.user.email,
+                  profile_picture : userCredential.user.photoURL
+                }).then(()=>{
+                  console.log("realtime data created successfully");
+                });
+              })
+            })
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      },
   });
   return (
     <div>
