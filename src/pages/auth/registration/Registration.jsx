@@ -15,6 +15,7 @@ import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, updateP
 import { getDatabase, ref, set } from "firebase/database";
 import { ToastContainer, toast } from 'react-toastify';
 import { DNA } from 'react-loader-spinner';
+import { useNavigate } from "react-router-dom";
 
 const LogHead = styled(Typography)({
   fontSize: 34,
@@ -46,7 +47,10 @@ const emailregx =  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+")
 const Registration = () => {
   const auth = getAuth();
   const db = getDatabase();
+
   const [loader,setLoader] = useState(false);
+  const navigate = useNavigate();
+
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -86,16 +90,10 @@ const Registration = () => {
                   profile_picture : userCredential.user.photoURL
                 }).then(()=>{
                   // console.log("realtime data created successfully");
-                  toast.success('Sign Up successful', {
-                    position: "top-right",
-                    autoClose: 2000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "light",
-                  });
+                  toast.success('Sign Up successful')
+                  setTimeout(() => { 
+                    navigate("/")
+                  }, 2000);
                 });
                 setLoader(false)             
               })
