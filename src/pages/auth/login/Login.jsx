@@ -15,7 +15,7 @@ import * as Yup from 'yup';
 import loginValidation from '../../../validation/LoginValidation';
 import Modal from '@mui/material/Modal';
 import { GiExitDoor } from "react-icons/gi";
-
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 const LogHead = styled(Typography)({
   fontSize: 34,
@@ -56,6 +56,8 @@ const style = {
 // const passregx = /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/
 
 const Login = () => {
+  
+  const auth = getAuth();
 
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);    
@@ -69,22 +71,20 @@ const Login = () => {
     initialValues: initialValues,
     validationSchema : loginValidation, //LoginValidation.jsx file in validation folder
     
-    // validationSchema: Yup.object({
-    //   email: Yup.string()
-    //     .email('Check your email format')
-    //     .matches(emailRegx , 'Check your email format')
-    //     .required('Please enter your email address'),
-    //   password: Yup.string()
-    //     .min(5 , 'minimum five character required')
-    //     .max(10 , 'minimum ten character')
-    //     .matches(passregx , "Password must contain at least 8 characters, one uppercase, one number and one special case character")
-    //     .required('Please enter your password')
-      
-    // }),
     onSubmit: (values,actions) => {
       console.log(values);
       actions.resetForm()  // actions.resetForm to reset our form
-      // alert(JSON.stringify(values, null, 2));
+      signInWithEmailAndPassword(auth, values.email, values.password)
+        .then((userCredential) => {
+          // Signed in 
+          console.log(userCredential);
+          // ...
+        })
+        .catch((error) => {
+          // const errorCode = error.code;
+          // const errorMessage = error.message;
+          console.log(error);
+        });
     },
   });
 

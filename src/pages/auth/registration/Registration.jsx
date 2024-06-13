@@ -13,6 +13,8 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, updateProfile} from "firebase/auth";
 import { getDatabase, ref, set } from "firebase/database";
+import { ToastContainer, toast } from 'react-toastify';
+import { DNA } from 'react-loader-spinner';
 
 const LogHead = styled(Typography)({
   fontSize: 34,
@@ -44,7 +46,7 @@ const emailregx =  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+")
 const Registration = () => {
   const auth = getAuth();
   const db = getDatabase();
-
+  const [loader,setLoader] = useState(false);
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -67,6 +69,7 @@ const Registration = () => {
     }),
     onSubmit: (values,action) => {
       // console.log(values);
+      setLoader(true)
       action.resetForm()
       createUserWithEmailAndPassword(auth, values.email, values.password)
         .then((userCredential) => {
@@ -82,18 +85,44 @@ const Registration = () => {
                   email: userCredential.user.email,
                   profile_picture : userCredential.user.photoURL
                 }).then(()=>{
-                  console.log("realtime data created successfully");
+                  // console.log("realtime data created successfully");
+                  toast.success('Sign Up successful', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                  });
                 });
+                setLoader(false)             
               })
             })
         })
         .catch((error) => {
           console.log(error);
+          setLoader(false)     
         });
       },
   });
   return (
     <div>
+      {loader 
+      &&
+      <div className='reg_loader'>
+        <DNA
+          visible={true}
+          height="180"
+          width="180"
+          ariaLabel="dna-loading"
+          wrapperStyle={{}}
+          wrapperClass="dna-wrapper"
+        />
+      </div>
+      }
+      <ToastContainer /> 
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={0}>
           <Grid item xs={6} style={{display:'flex', alignItems:'center',justifyContent:'center'}}>
