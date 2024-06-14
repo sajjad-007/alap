@@ -19,6 +19,8 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { ToastContainer, toast } from 'react-toastify';
 import { ThreeDots } from 'react-loader-spinner';
 import { useNavigate } from "react-router-dom";
+import { sendPasswordResetEmail } from "firebase/auth";
+import { GoogleAuthProvider,signInWithPopup } from "firebase/auth";
 
 
 const LogHead = styled(Typography)({
@@ -62,13 +64,16 @@ const style = {
 const Login = () => {
   
   const [loader , setLoader] = useState(false)
+  const [forgetpass,setForgetpass] = useState("")
   const auth = getAuth();
+  const provider = new GoogleAuthProvider();
 
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);    
   const handleClose = () => setOpen(false);
   const navigate = useNavigate();
   
+  // All Validation 
 
   const initialValues = {
     email: '',
@@ -79,18 +84,15 @@ const Login = () => {
     validationSchema : loginValidation, //LoginValidation.jsx file in validation folder
     
     onSubmit: (values,actions) => {
-      // console.log(values);
-      setLoader(true)
-        // actions.resetForm to reset our form
+      setLoader(true)                                     
+        // Signed in 
       signInWithEmailAndPassword(auth, values.email, values.password)
         .then((userCredential) => {
-          // Signed in 
           const user = userCredential.user
-          // console.log(user.emailVerified);
           if (user.emailVerified) {
-            console.log("verified");
-            actions.resetForm()
+            actions.resetForm() // actions.resetForm to reset our form
             toast.success('email verifi successful');
+            
             setTimeout(() => {
               setLoader(false)   
               navigate('/home')
@@ -104,10 +106,52 @@ const Login = () => {
           console.log(error);
           toast.error('Invalid user name or password')
           setLoader(false)
+          // console.log(e.target.value);
         });
     },
   });
 
+  //=== Sign in with google
+  let handleGoogleLog = () =>{
+    signInWithPopup(auth, provider)
+    .then((result) => {
+      // This gives you a Google Access Token. You can use it to access the Google API.
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      const token = credential.accessToken;
+      console.log(result);
+      // The signed-in user info.
+      const user = result.user;
+      // IdP data available using getAdditionalUserInfo(result)
+      //
+      setTimeout(() => {
+        navigate("/home")
+      }, 3000);
+    }).catch((error) => {
+      // Handle Errors here.
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // The email of the user's account used.
+      const email = error.customData.email;
+      // The AuthCredential type that was used.
+      const credential = GoogleAuthProvider.credentialFromError(error);
+      // ...
+    });
+  }
+  /// forget password
+  let handleForgetpass = (e) => {
+    console.log(forgetpass);
+    e.preventDefault()
+    sendPasswordResetEmail(auth, forgetpass)
+  .then(() => {
+    toast.info('Password reset email sent!')
+    // ..
+  })
+  .catch((error) => {
+    console.log(error);
+    toast.error('Invalid  email address')
+  });
+  }
+  
   return (
     <div>
       <ToastContainer /> 
@@ -118,12 +162,12 @@ const Login = () => {
               <LogHead level="h2">
                 Login to your account!
               </LogHead>
-              <div className='log_box' style={{height:'62px', width:'220px', display:'flex', alignItems:'center', justifyContent:'center', marginTop:'30px', borderRadius:'9px'}}>
-                <Link to="https://www.google.com/">
+              <div onClick={handleGoogleLog} className='log_box' style={{height:'62px', width:'220px', display:'flex', alignItems:'center', justifyContent:'center', marginTop:'30px', borderRadius:'9px'}}>
+                <Link>
                   <FcGoogle />
                 </Link>
                 <p className='log_pera' style={{color: '#03014C', fontSize:"14px", fontWeight:"600", letterSpacing:'.267px'}}>
-                  <Link to="https://www.google.com/">Login with Google</Link>
+                  <Link>Login with Google</Link>
                 </p> 
               </div>
               <form onSubmit={formik.handleSubmit}>
@@ -160,7 +204,6 @@ const Login = () => {
                 </div>
                 <div className="log_btn">
                   <BootstrapButton disabled={loader} style={{display:'inline-block'}} type='submit' variant="contained">
-                  
                   {loader ?
                     <ThreeDots
                     visible={true}
@@ -191,23 +234,24 @@ const Login = () => {
                 <button className='modal_exit' onClick={ () => setOpen(false)}>
                   <GiExitDoor />
                 </button>
-                <form onSubmit={formik.handleSubmit}>
-                  <div>
+                  <form >
+                    <div>
                       <InputBox 
                         id="standard-basic" 
                         label="Email Address" 
                         variant="outlined" 
                         name='email' 
                         type='email' 
-                        onChange={formik.handleChange} 
-                        value={formik.values.email} 
+                        // onChange={(e)=> {setForgetpass(e.target.value)}}
+                        onChange={(e)=>setForgetpass(e.target.value)}
                         style={{marginBottom:'30px'}} 
-                      />
-                  </div>
-                  <BootstrapButton type='submit' variant="contained" style={{textAlign:'center',marginLeft:'30px', marginTop:'30px'}} >
-                     submit  
-                  </BootstrapButton>
-                </form>
+                        />
+                        
+                    </div>
+                      <BootstrapButton onClick={handleForgetpass} type='submit' variant="contained" style={{textAlign:'center',marginLeft:'30px', marginTop:'30px'}} >
+                        submit  
+                      </BootstrapButton>
+                  </form>
               </Box>
             </Modal>
             </div>
@@ -223,4 +267,4 @@ const Login = () => {
   )
 }
 
-export default Login
+export default Login 

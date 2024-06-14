@@ -64,7 +64,7 @@ const Registration = () => {
         .required('Kindly enter your full name'),
       password: Yup.string()
         .max(10, 'Must be 10 characters or less')
-        .min(5, 'Minimum 5 characters required')
+        .min(4, 'Minimum 5 characters required')
         .required('Kindly enter your password'),
       email: Yup.string()
       .email('Invalid email address')
