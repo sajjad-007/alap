@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 // import * as React from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -16,6 +16,10 @@ import loginValidation from '../../../validation/LoginValidation';
 import Modal from '@mui/material/Modal';
 import { GiExitDoor } from "react-icons/gi";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { ToastContainer, toast } from 'react-toastify';
+import { ThreeDots } from 'react-loader-spinner';
+import { useNavigate } from "react-router-dom";
+
 
 const LogHead = styled(Typography)({
   fontSize: 34,
@@ -57,11 +61,14 @@ const style = {
 
 const Login = () => {
   
+  const [loader , setLoader] = useState(false)
   const auth = getAuth();
 
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);    
   const handleClose = () => setOpen(false);
+  const navigate = useNavigate();
+  
 
   const initialValues = {
     email: '',
@@ -72,24 +79,38 @@ const Login = () => {
     validationSchema : loginValidation, //LoginValidation.jsx file in validation folder
     
     onSubmit: (values,actions) => {
-      console.log(values);
-      actions.resetForm()  // actions.resetForm to reset our form
+      // console.log(values);
+      setLoader(true)
+        // actions.resetForm to reset our form
       signInWithEmailAndPassword(auth, values.email, values.password)
         .then((userCredential) => {
           // Signed in 
-          console.log(userCredential);
-          // ...
+          const user = userCredential.user
+          // console.log(user.emailVerified);
+          if (user.emailVerified) {
+            console.log("verified");
+            actions.resetForm()
+            toast.success('email verifi successful');
+            setTimeout(() => {
+              setLoader(false)   
+              navigate('/home')
+            }, 2000);
+          }else{
+            toast.warning('please verifi your email')
+            setLoader(false)
+          }
         })
         .catch((error) => {
-          // const errorCode = error.code;
-          // const errorMessage = error.message;
           console.log(error);
+          toast.error('Invalid user name or password')
+          setLoader(false)
         });
     },
   });
 
   return (
     <div>
+      <ToastContainer /> 
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={0}>
           <Grid item xs={6} style={{display:'flex', alignItems:'center',justifyContent:'center'}}>
@@ -138,8 +159,22 @@ const Login = () => {
                   </div>
                 </div>
                 <div className="log_btn">
-                  <BootstrapButton style={{display:'inline-block'}} type='submit' variant="contained">
-                  Login to Continue
+                  <BootstrapButton disabled={loader} style={{display:'inline-block'}} type='submit' variant="contained">
+                  
+                  {loader ?
+                    <ThreeDots
+                    visible={true}
+                    height="50"
+                    width="50"
+                    color="#fff"
+                    radius="9"
+                    ariaLabel="three-dots-loading"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                  />
+                    :
+                    "Login to Continue"
+                  }
                   </BootstrapButton>
                 </div>
               </form>
@@ -170,7 +205,7 @@ const Login = () => {
                       />
                   </div>
                   <BootstrapButton type='submit' variant="contained" style={{textAlign:'center',marginLeft:'30px', marginTop:'30px'}} >
-                    Submit
+                     submit  
                   </BootstrapButton>
                 </form>
               </Box>

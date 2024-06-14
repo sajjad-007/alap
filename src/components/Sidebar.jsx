@@ -1,19 +1,17 @@
 import React from 'react'
 import './layout.css'
 import Avatar from '@mui/material/Avatar';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Navigate } from 'react-router-dom';
 import { ImExit } from "react-icons/im";
 import { FaHome } from "react-icons/fa";
 import { AiFillMessage } from "react-icons/ai";
 import { FaBell } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
-
-
-
-
+import { useNavigate } from "react-router-dom";
 
 
 const Sidebar = () => {
+  const navigate = useNavigate();
   return (
     <div>
       <div className="sidebar_main">
@@ -49,8 +47,12 @@ const Sidebar = () => {
               </li>
             </ul>
           </div>
-          <div className="sidebar_logout">
-            <ImExit/>
+          <div className="sidebar_logout"> 
+            <span style={{cursor:'pointer'}} onClick={() =>{ setTimeout(() => {
+                    navigate('/')
+                  }, 2000) } }> 
+              <ImExit/> 
+            </span>
           </div>
         </div>
       </div>
