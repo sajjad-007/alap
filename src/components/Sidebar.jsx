@@ -8,10 +8,22 @@ import { AiFillMessage } from "react-icons/ai";
 import { FaBell } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import { getAuth, signOut } from "firebase/auth";
 
 
 const Sidebar = () => {
+  const auth = getAuth();
   const navigate = useNavigate();
+
+  const handleSignOut = () =>{
+    signOut(auth).then(() => {
+      // Sign-out successful.
+      navigate('/')
+    }).catch((error) => {
+      // An error happened.
+      console.log(error);
+    });
+  }
   return (
     <div>
       <div className="sidebar_main">
@@ -48,9 +60,7 @@ const Sidebar = () => {
             </ul>
           </div>
           <div className="sidebar_logout"> 
-            <span style={{cursor:'pointer'}} onClick={() =>{ setTimeout(() => {
-                    navigate('/')
-                  }, 2000) } }> 
+            <span style={{cursor:'pointer'}} onClick={handleSignOut}> 
               <ImExit/> 
             </span>
           </div>
