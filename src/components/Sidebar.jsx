@@ -10,6 +10,7 @@ import { IoMdSettings } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { getAuth, signOut } from "firebase/auth";
 import { useSelector, useDispatch } from 'react-redux'
+import { loginUser } from '../counter/authSlice';
 
 
 const Sidebar = () => {
@@ -17,14 +18,15 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const data = useSelector(state => state.loginUserData.value)
   const dispatch = useDispatch()
-  console.log(data.displayName);
+  // console.log(data);
 
   const handleSignOut = () =>{
     signOut(auth).then(() => {
       // Sign-out successful.
       navigate('/')
+      localStorage.removeItem("loggedInfo")
+      dispatch(loginUser(null))
     }).catch((error) => {
-      // An error happened.
       console.log(error);
     });
   }
@@ -38,7 +40,14 @@ const Sidebar = () => {
               src="/static/images/avatar/1.jpg"
               sx={{ width: 50, height: 50 }}
             />
-            <p style={{textTransform:'capitalize',padding:'15px 0',color:"white",fontSize:'15px'}}>{data.displayName}</p>
+            <p style={{textTransform:'capitalize',padding:'15px 0',color:"white",fontSize:'15px'}}>
+              {data 
+                ?
+                data.displayName
+                :
+                <p>data none</p>
+              }
+              </p>
           </div>
           <div className="sidebar_items">
             <ul style={{display:'flex',flexDirection:'column',justifyContent:'center',rowGap:'30px'}}>

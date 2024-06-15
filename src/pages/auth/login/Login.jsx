@@ -15,12 +15,15 @@ import * as Yup from 'yup';
 import loginValidation from '../../../validation/LoginValidation';
 import Modal from '@mui/material/Modal';
 import { GiExitDoor } from "react-icons/gi";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword,signOut } from "firebase/auth";
 import { ToastContainer, toast } from 'react-toastify';
 import { ThreeDots } from 'react-loader-spinner';
 import { useNavigate } from "react-router-dom";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { GoogleAuthProvider,signInWithPopup } from "firebase/auth";
+import { useSelector, useDispatch } from 'react-redux'
+import { loginUser } from '../../../counter/authSlice';
+
 
 
 const LogHead = styled(Typography)({
@@ -67,6 +70,7 @@ const Login = () => {
   const [forgetpass,setForgetpass] = useState("")
   const auth = getAuth();
   const provider = new GoogleAuthProvider();
+  const dispatch = useDispatch()
 
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);    
@@ -89,11 +93,11 @@ const Login = () => {
       signInWithEmailAndPassword(auth, values.email, values.password)
         .then((userCredential) => {
           const user = userCredential.user
-          localStorage.setItem("loggedInfo", JSON.stringify(user) );
           if (user.emailVerified) {
+            localStorage.setItem("loggedInfo", JSON.stringify(user) );
             actions.resetForm() // actions.resetForm to reset our form
+            dispatch(loginUser(user))
             toast.success('email verifi successful');
-            
             setTimeout(() => {
               setLoader(false)   
               navigate('/home')
@@ -117,24 +121,26 @@ const Login = () => {
     signInWithPopup(auth, provider)
     .then((result) => {
       // This gives you a Google Access Token. You can use it to access the Google API.
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      const token = credential.accessToken;
-      console.log(result);
-      // The signed-in user info.
+      // const credential = GoogleAuthProvider.credentialFromResult(result);
+      // const token = credential.accessToken;
       const user = result.user;
-      // IdP data available using getAdditionalUserInfo(result)
+      
+      if (user.emailVerified) {
+        localStorage.setItem("loggedInfo", JSON.stringify(user) );
+        // actions.resetForm() // actions.resetForm to reset our form
+        dispatch(loginUser(user))
+        toast.success('email verifi successful');
+        setLoader(false)   
+        navigate('/home')
+      }else{
+        toast.warning('please verifi your email')
+        setLoader(false)
+      }
+     
       //
-      setTimeout(() => {
-        navigate("/home")
-      }, 3000);
     }).catch((error) => {
       // Handle Errors here.
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      // The email of the user's account used.
-      const email = error.customData.email;
-      // The AuthCredential type that was used.
-      const credential = GoogleAuthProvider.credentialFromError(error);
+      console.log(error);
       // ...
     });
   }

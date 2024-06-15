@@ -5,6 +5,7 @@ export const authSlice = createSlice({
   initialState: {
     value: localStorage.getItem('loggedInfo') ? JSON.parse(localStorage.getItem('loggedInfo')): null ,
   },
+  // reducers er kaj holo update kora
   reducers: {
     loginUser: (state, action) => {
       state.value = action.payload
