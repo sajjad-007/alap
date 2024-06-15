@@ -89,6 +89,7 @@ const Login = () => {
       signInWithEmailAndPassword(auth, values.email, values.password)
         .then((userCredential) => {
           const user = userCredential.user
+          localStorage.setItem("loggedInfo", JSON.stringify(user) );
           if (user.emailVerified) {
             actions.resetForm() // actions.resetForm to reset our form
             toast.success('email verifi successful');

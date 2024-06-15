@@ -9,11 +9,15 @@ import { FaBell } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { getAuth, signOut } from "firebase/auth";
+import { useSelector, useDispatch } from 'react-redux'
 
 
 const Sidebar = () => {
   const auth = getAuth();
   const navigate = useNavigate();
+  const data = useSelector(state => state.loginUserData.value)
+  const dispatch = useDispatch()
+  console.log(data.displayName);
 
   const handleSignOut = () =>{
     signOut(auth).then(() => {
@@ -34,6 +38,7 @@ const Sidebar = () => {
               src="/static/images/avatar/1.jpg"
               sx={{ width: 50, height: 50 }}
             />
+            <p style={{textTransform:'capitalize',padding:'15px 0',color:"white",fontSize:'15px'}}>{data.displayName}</p>
           </div>
           <div className="sidebar_items">
             <ul style={{display:'flex',flexDirection:'column',justifyContent:'center',rowGap:'30px'}}>
