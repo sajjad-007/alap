@@ -12,20 +12,25 @@ import Error from "./pages/error/Error";
 import Login from "./pages/auth/login/Login";
 import Registration from "./pages/auth/registration/Registration";
 import Notification from "./pages/notification/Notification";
+import IsLoggedInUser from "./components/privetRoutes/IsLoggedInUser";
+import NotLoggedInUser from "./components/privetRoutes/NotLoggedInUser";
+// import NotLoggedInUser from "./components/privetRoutes/NotLoggedInUser";
 
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route>
-        <Route element={<RootLayout/>}>
-          <Route path="/home" element={<Home/>}/>
-          <Route path="/message" element={<Message/>}/>
-          <Route path="/settings" element={<Setting/>}/>
-          <Route path="/notification" element={<Notification/>}/>
-        </Route>
-          <Route path="/" element={<Login/>}/>
-          <Route path="/registration" element={<Registration/>}/>
-          <Route path="*" element={<Error/>}/>
+        <Route element={<IsLoggedInUser/>}>
+          <Route element={<RootLayout/>}>
+            <Route path="/home" element={<Home/>}/>
+            <Route path="/message" element={<Message/>}/>
+            <Route path="/settings" element={<Setting/>}/>
+            <Route path="/notification" element={<Notification/>}/>
+          </Route>
+        </Route> 
+            <Route path="/" element={<Login/>}/>
+            <Route path="/registration" element={<Registration/>}/>
+            <Route path="*" element={<Error/>}/>
       </Route>
     )
   );

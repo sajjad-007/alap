@@ -6,7 +6,6 @@ import Avatar from '@mui/material/Avatar';
 import CartSubHead from '../utilities/CartSubHead';
 import CartComment from '../utilities/CartComment';
 import { FaSquarePlus } from "react-icons/fa6";
-
 const CartList = () => {
   return (
     <div className='cartList'>
