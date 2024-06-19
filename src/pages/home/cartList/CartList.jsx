@@ -7,15 +7,28 @@ import CartSubHead from '../../../components/utilities/CartSubHead';
 import CartComment from '../../../components/utilities/CartComment';
 import { FaSquarePlus } from "react-icons/fa6";
 import { useSelector, useDispatch } from 'react-redux'
-import { getDatabase, ref, onValue,push } from "firebase/database";
+import { getDatabase, ref, onValue,push, set } from "firebase/database";
 
 
 const CartList = () => {
   const data = useSelector(state => state.loginUserData.value)
+  // console.log(data);
   const db = getDatabase();
   const [userList,setUserList] = useState([])
-  // console.log(data.uid);
-
+  // friend request send
+  let handleFriendReq = (friendReqInfo) => {
+    // console.log(friendReqInfo);
+    set(push(ref(db, 'friendRequest')),{
+      whoreciveid : friendReqInfo.id,
+      whoreciveemail : friendReqInfo.email,
+      whoreciveName : friendReqInfo.fullName,
+      whosendid : data.uid,
+      whosendemail : data.email,
+      whosendName : data.displayName,
+    }).then(()=>{
+      console.log('friend request done');
+    })
+  }
   //firebase read operation
   useEffect(()=>{
     const usersRef = ref(db, 'users' );
@@ -55,15 +68,12 @@ const CartList = () => {
                 />
                 <div style={{display:"flex", flexDirection:'column', justifyContent:'center'}}>
                   <CartSubHead text={item.fullName}/>
-                  {/* <div>
-                    <h2>{item.fullName}</h2>
-                  </div> */}
                   <CartComment text='Today, 6:pm'/>
                 </div>
               </div>
             </div>
             <div className="cartChild_second">
-              <FaSquarePlus />
+              <FaSquarePlus onClick={()=>handleFriendReq(item)}/>
             </div>
           </div>
         ))

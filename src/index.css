@@ -18,3 +18,16 @@ a{
     font-size: 20.641px;
     font-weight: 600;
 }
+.btn_style {
+    color: #FFF;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: normal;
+    width: 87px;
+    height: 30px;
+    border-radius: 5px;
+    background: #5F35F5;
+    text-transform: capitalize;
+    cursor: pointer;
+    border: none;
+}
