@@ -1,10 +1,10 @@
 import './cartList.css'
 import React, { useEffect, useState } from 'react'
-import CartHeading from '../utilities/CartHeading'
+import CartHeading from '../../../components/utilities/CartHeading'
 import { BsThreeDotsVertical } from "react-icons/bs";
 import Avatar from '@mui/material/Avatar';
-import CartSubHead from '../utilities/CartSubHead';
-import CartComment from '../utilities/CartComment';
+import CartSubHead from '../../../components/utilities/CartSubHead';
+import CartComment from '../../../components/utilities/CartComment';
 import { FaSquarePlus } from "react-icons/fa6";
 import { useSelector, useDispatch } from 'react-redux'
 import { getDatabase, ref, onValue,push } from "firebase/database";
@@ -14,7 +14,7 @@ const CartList = () => {
   const data = useSelector(state => state.loginUserData.value)
   const db = getDatabase();
   const [userList,setUserList] = useState([])
-  console.log(data.uid);
+  // console.log(data.uid);
 
   //firebase read operation
   useEffect(()=>{
@@ -25,6 +25,8 @@ const CartList = () => {
         if (item.key != data.uid) { 
           // data.uid holo je login ache tar uid
           // item.key holo browser er sokol user er unique id
+          
+          // ultimetly = users er id (item.key) shathe judi je login ache tar id (data.uid) name mile tahole login id chara baki users id gulo user list a push hoye jabe
           array.push({...item.val(), id: item.key});
           // item.val()= firebase er value return korbe
           // item.key = firebase er unique id gula always key er modde pabo
@@ -33,7 +35,7 @@ const CartList = () => {
       setUserList(array);
   });
   },[])
-  console.log(userList);
+  // console.log(userList);
 
   return (
     <div className='cartList'>
@@ -52,10 +54,10 @@ const CartList = () => {
                   sx={{ width: 50, height: 50 }}
                 />
                 <div style={{display:"flex", flexDirection:'column', justifyContent:'center'}}>
-                  {/* <CartSubHead text={item.fullName}/> */}
-                  <div>
+                  <CartSubHead text={item.fullName}/>
+                  {/* <div>
                     <h2>{item.fullName}</h2>
-                  </div>
+                  </div> */}
                   <CartComment text='Today, 6:pm'/>
                 </div>
               </div>

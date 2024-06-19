@@ -1,6 +1,7 @@
 import React from 'react'
 // import CartList from '../../components/cartList/CartList'
-import CartList from '../../components/cartList/CartList'
+// import CartList from '../../components/cartList/CartList'
+import CartList from './cartList/CartList'
 
 const Home = () => {
   return (
