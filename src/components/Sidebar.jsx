@@ -10,7 +10,8 @@ import { IoMdSettings } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { getAuth, signOut } from "firebase/auth";
 import { useSelector, useDispatch } from 'react-redux'
-import { loginUser } from '../counter/authSlice';
+import { loginUser } from '../slice/authSlice';
+
 
 
 const Sidebar = () => {
@@ -34,7 +35,7 @@ const Sidebar = () => {
     <div>
       <div className="sidebar_main">
         <div className="sidebar_inner">
-          <div className="sidebar_avatar">
+          <div className="sidebar_avatar" style={{display:'flex',alignItems:'center',justifyContent:'center' ,flexDirection:"column",textAlign:'center'}}>
             <Avatar
               alt="sajjad"
               src="/static/images/avatar/1.jpg"

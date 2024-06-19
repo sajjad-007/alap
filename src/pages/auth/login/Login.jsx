@@ -15,14 +15,15 @@ import * as Yup from 'yup';
 import loginValidation from '../../../validation/LoginValidation';
 import Modal from '@mui/material/Modal';
 import { GiExitDoor } from "react-icons/gi";
-import { getAuth, signInWithEmailAndPassword,signOut } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword,signOut ,updateProfile } from "firebase/auth";
 import { ToastContainer, toast } from 'react-toastify';
 import { ThreeDots } from 'react-loader-spinner';
 import { useNavigate } from "react-router-dom";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { GoogleAuthProvider,signInWithPopup } from "firebase/auth";
 import { useSelector, useDispatch } from 'react-redux'
-import { loginUser } from '../../../counter/authSlice';
+import { loginUser } from '../../../slice/authSlice';
+import { getDatabase, ref, set,push } from "firebase/database";
 
 
 
@@ -65,7 +66,8 @@ const style = {
 // const passregx = /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/
 
 const Login = () => {
-  
+
+  const db = getDatabase();
   const [loader , setLoader] = useState(false)
   const [forgetpass,setForgetpass] = useState("")
   const auth = getAuth();
@@ -81,6 +83,7 @@ const Login = () => {
 
   const initialValues = {
     email: '',
+    fullName: " ",
     password: '',
   }
   const formik = useFormik({
@@ -102,6 +105,10 @@ const Login = () => {
               setLoader(false)   
               navigate('/home')
             }, 2000);
+            set(ref(db, 'users/' + userCredential.user.uid), {
+              fullName: userCredential.user.displayName,
+              email: userCredential.user.email,
+            })
           }else{
             toast.warning('please verifi your email')
             setLoader(false)
@@ -124,6 +131,7 @@ const Login = () => {
       // const credential = GoogleAuthProvider.credentialFromResult(result);
       // const token = credential.accessToken;
       const user = result.user;
+      console.log(user);
       
       if (user.emailVerified) {
         localStorage.setItem("loggedInfo", JSON.stringify(user) );
@@ -132,6 +140,16 @@ const Login = () => {
         toast.success('email verifi successful');
         setLoader(false)   
         navigate('/home')
+        //firebase
+        updateProfile(auth.currentUser, {
+          displayName: user.fullName, 
+        }).then(()=>{
+
+          set(push(ref(db, 'users/' + user.uid)), {
+            fullName: user.displayName,
+            email: user.email,
+          })
+        })
       }else{
         toast.warning('please verifi your email')
         setLoader(false)

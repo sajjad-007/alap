@@ -47,7 +47,6 @@ const emailregx =  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+")
 const Registration = () => {
   const auth = getAuth();
   const db = getDatabase();
-
   const [loader,setLoader] = useState(false);
   const navigate = useNavigate();
 
