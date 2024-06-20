@@ -16,12 +16,12 @@ const CartList = () => {
   const [friendReqList,setFriendReqList] = useState([])
   const [userList,setUserList] = useState([])
   // friend request send
-  let handleFriendReq = (friendReqInfo) => {
-    // console.log(friendReqInfo);
+  let handleFriendReq = (item) => {
+    // console.log(item);
     set(push(ref(db, 'friendRequest')),{
-      whoreciveid : friendReqInfo.id,
-      whoreciveemail : friendReqInfo.email,
-      whoreciveName : friendReqInfo.fullName,
+      whoreciveid : item.id,
+      whoreciveemail : item.email,
+      whoreciveName : item.fullName,
       whosendid : data.uid,
       whosendemail : data.email,
       whosendName : data.displayName,
@@ -56,7 +56,7 @@ const CartList = () => {
     onValue(usersRef, (snapshot) => {
       let array = []
       snapshot.forEach( (item) => {
-        if (data.uid == item.val().whosendid) { 
+        if (data.uid == item.val().whosendid || data.uid == item.val().whoreciveid) { 
           // je login ache (data.uid) and je friend request send korse (whosendid) tader id judi ek hoy tahole array er modde push hobe sender id and reciver id .
           array.push(item.val().whosendid + item.val().whoreciveid);
         }
