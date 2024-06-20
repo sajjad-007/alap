@@ -12,7 +12,7 @@ import '../cartList/cartList.css'
 const FriendRequest = () => {
   const db = getDatabase();
   const data = useSelector(state => state.loginUserData.value)
-  // console.log(data);
+  console.log(data);
   const [friendReq,setFriendReq] = useState([])
 
   // friend Request firebase read operation
@@ -29,10 +29,23 @@ const FriendRequest = () => {
   });
   },[])
 
-  // friend request delete
-  let handleDelete = (deleteInfo) =>{
+  // friend request delete firebase
+  let handleDeleteBtn = (deleteInfo) =>{
     // console.log(deleteInfo.id);
     remove(ref(db,'friendRequest/' + deleteInfo.id))
+  }
+  // friend request accept 
+  let handleAccepteBtn = (acceptInfo) =>{
+    set(push(ref(db, 'friendsList')),{
+      sendername: acceptInfo.whosendName,
+      senderemail: acceptInfo.whosendemail,
+      senderid: acceptInfo.whosendid,
+      recivername: data.displayName,
+      reciveremail: data.email,
+      reciverid: data.uid,
+    }).then(()=>{
+      remove(ref(db,'friendRequest/' + acceptInfo.id))
+    })
   }
   
   return (
@@ -61,8 +74,8 @@ const FriendRequest = () => {
             </div>
           </div>
           <div className="cartChild_second" style={{display:'flex',flexWrap:'wrap',flexDirection:'column',gap:'5px'}}>
-            <Button className='btn_style' text='accept'/>
-            <Button className='btn_style' onClick={()=> handleDelete(item)} text='delete'/>
+            <Button className='btn_style' onClick={()=> handleAccepteBtn(item)} text='accept'/>
+            <Button className='btn_style' onClick={()=> handleDeleteBtn(item)} text='delete'/>
           </div>
         </div>
       ))
