@@ -12,8 +12,8 @@ import { getDatabase, ref, onValue,push, set } from "firebase/database";
 
 const CartList = () => {
   const data = useSelector(state => state.loginUserData.value)
-  // console.log(data);
   const db = getDatabase();
+  const [friendReqList,setFriendReqList] = useState([])
   const [userList,setUserList] = useState([])
   // friend request send
   let handleFriendReq = (friendReqInfo) => {
@@ -25,11 +25,12 @@ const CartList = () => {
       whosendid : data.uid,
       whosendemail : data.email,
       whosendName : data.displayName,
-    }).then(()=>{
-      console.log('friend request done');
+    }).then(()=> {
+      // console.log('friend request done');
     })
   }
-  //firebase read operation
+  //firebase read operation userList
+  
   useEffect(()=>{
     const usersRef = ref(db, 'users' );
     onValue(usersRef, (snapshot) => {
@@ -48,7 +49,21 @@ const CartList = () => {
       setUserList(array);
   });
   },[])
-  // console.log(userList);
+
+  //friends request list
+  useEffect(()=>{
+    const usersRef = ref(db, 'friendRequest' );
+    onValue(usersRef, (snapshot) => {
+      let array = []
+      snapshot.forEach( (item) => {
+        if (data.uid == item.val().whosendid) { 
+          // je login ache (data.uid) and je friend request send korse (whosendid) tader id judi ek hoy tahole array er modde push hobe sender id and reciver id .
+          array.push(item.val().whosendid + item.val().whoreciveid);
+        }
+      })
+      setFriendReqList(array);
+  });
+  },[])
 
   return (
     <div className='cartList'>
@@ -73,7 +88,14 @@ const CartList = () => {
               </div>
             </div>
             <div className="cartChild_second">
-              <FaSquarePlus onClick={()=>handleFriendReq(item)}/>
+            {/* includes() function er kaj holo search kora, eti ekti string er modde tar value search korbe */}
+              {friendReqList.includes(data.uid + item.id) || friendReqList.includes(item.id + data.uid)
+                ?
+                <button className='btn_style'>Cancle</button>
+                // ekhon friend request pathle add button change hoye cancle button show korbe
+                :
+                <FaSquarePlus onClick={()=>handleFriendReq(item)}/>
+              }
             </div>
           </div>
         ))
