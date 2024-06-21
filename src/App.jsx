@@ -14,6 +14,7 @@ import Registration from "./pages/auth/registration/Registration";
 import Notification from "./pages/notification/Notification";
 import IsLoggedInUser from "./components/privetRoutes/IsLoggedInUser";
 import NotLoggedInUser from "./components/privetRoutes/NotLoggedInUser";
+import Profile from "./pages/profile/Profile";
 // import NotLoggedInUser from "./components/privetRoutes/NotLoggedInUser";
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
             <Route path="/message" element={<Message/>}/>
             <Route path="/settings" element={<Setting/>}/>
             <Route path="/notification" element={<Notification/>}/>
+            <Route path="/profile/:id" element={<Profile/>}/>
           </Route>
         </Route> 
             <Route path="/" element={<Login/>}/>

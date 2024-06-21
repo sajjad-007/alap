@@ -7,8 +7,9 @@ import CartSubHead from '../../../components/utilities/CartSubHead';
 import CartComment from '../../../components/utilities/CartComment';
 import { FaSquarePlus } from "react-icons/fa6";
 import { useSelector, useDispatch } from 'react-redux'
-import { getDatabase, ref, onValue,push, set } from "firebase/database";
+import { getDatabase, ref, onValue,push, set,remove } from "firebase/database";
 import { Alert } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 
 const CartList = () => {
@@ -97,6 +98,12 @@ const CartList = () => {
   },[])
   // console.log(blockFriend);
 
+  // Cancle button
+  let handleCancleBtn = (cancleBtnInfo) =>{
+    // console.log(cancleBtnInfo);
+    // remove(ref(db,'friendRequest/' + cancleBtnInfo.id))
+  }
+
   return (
     <div className='cartList'>
       <div style={{display:'flex',alignItems:'center', justifyContent:'space-between'}}>
@@ -116,7 +123,9 @@ const CartList = () => {
                   sx={{ width: 50, height: 50 }}
                 />
                 <div style={{display:"flex", flexDirection:'column', justifyContent:'center'}}>
-                  <CartSubHead text={item.fullName}/>
+                  <Link to={`/profile/${item.id}`}>               
+                    <CartSubHead text={item.fullName}/>
+                  </Link>
                   <CartComment text='Today, 6:pm'/>
                 </div>
               </div>
@@ -125,7 +134,7 @@ const CartList = () => {
             {/* includes() function er kaj holo search kora, eti ekti string er modde tar value search korbe */}
               {friendReqList.includes(data.uid + item.id) || friendReqList.includes(item.id + data.uid)
                 ?
-                <button className='btn_style'>Cancle</button>
+                <button className='btn_style' onClick={()=>handleCancleBtn(item)}>Cancle</button>
                 // ekhon friend request pathle add button change hoye cancle button show korbe
                 :
                   friendBtn.includes(data.uid + item.id) || friendBtn.includes(item.id + data.uid)
@@ -136,7 +145,7 @@ const CartList = () => {
                   ?
                   <button className='btn_style'>blocked</button>
                   :
-                  <FaSquarePlus onClick={()=>handleFriendReq(item)}/>
+                <FaSquarePlus onClick={()=>handleFriendReq(item)}/>
               }
             </div>
           </div>
