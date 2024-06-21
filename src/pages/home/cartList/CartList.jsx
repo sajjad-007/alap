@@ -17,6 +17,7 @@ const CartList = () => {
   const [friendReqList,setFriendReqList] = useState([])
   const [userList,setUserList] = useState([])
   const [friendBtn,setFriendBtn] = useState([])
+  const [blockFriend,setBlockFriend] = useState([])
   // friend request send
   let handleFriendReq = (item) => {
     // console.log(item);
@@ -80,7 +81,21 @@ const CartList = () => {
       setFriendBtn(array);
   });
   },[])
-  console.log(friendBtn);
+
+  //blcoked friend
+  useEffect(() => {
+    const usersRef = ref(db, 'blockedfriend' );
+    onValue(usersRef, (snapshot) => {
+      let array = []
+      snapshot.forEach( (item) => {
+        if (data.uid == item.val().blockkhaiseid || data.uid == item.val().blockdicheid) { 
+          array.push(item.val().blockkhaiseid + item.val().blockdicheid);
+        }
+      })
+      setBlockFriend(array);
+  });
+  },[])
+  // console.log(blockFriend);
 
   return (
     <div className='cartList'>
@@ -116,6 +131,10 @@ const CartList = () => {
                   friendBtn.includes(data.uid + item.id) || friendBtn.includes(item.id + data.uid)
                   ?
                   <button className='btn_style'>friend</button>
+                  :
+                  blockFriend.includes(data.uid + item.id)|| blockFriend.includes(item.id + data.uid)
+                  ?
+                  <button className='btn_style'>blocked</button>
                   :
                   <FaSquarePlus onClick={()=>handleFriendReq(item)}/>
               }

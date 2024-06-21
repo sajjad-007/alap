@@ -57,38 +57,38 @@ const FriendRequest = () => {
     <div className="cartItembox">
       
       {friendReq.length > 0
-      ?
-      friendReq.map((item,index)=>(
-        <div key={index} className="cartItemChild"style={{display:'flex', gap:'70px'}} >
-          <div className="cartChild_first">
-            <div className="first_main" style={{display:'flex', gap:'15px'}}>
-              <Avatar
-                alt="Remy Sharp"
-                src="/static/images/avatar/1.jpg"
-                sx={{ width: 50, height: 50 }}
-              />
-              <div style={{display:"flex", flexDirection:'column', justifyContent:'center'}}>
-                <CartSubHead text={item.whosendName}/>
-                {/* <div>
-                  <h2>{item.fullName}</h2>
-                </div> */}
-                <CartComment text='Today, 6:pm'/>
+        ?
+        friendReq.map((item,index)=>(
+          <div key={index} className="cartItemChild"style={{display:'flex', gap:'70px'}} >
+            <div className="cartChild_first">
+              <div className="first_main" style={{display:'flex', gap:'15px'}}>
+                <Avatar
+                  alt="Remy Sharp"
+                  src="/static/images/avatar/1.jpg"
+                  sx={{ width: 50, height: 50 }}
+                />
+                <div style={{display:"flex", flexDirection:'column', justifyContent:'center'}}>
+                  <CartSubHead text={item.whosendName}/>
+                  {/* <div>
+                    <h2>{item.fullName}</h2>
+                  </div> */}
+                  <CartComment text='Today, 6:pm'/>
+                </div>
               </div>
             </div>
+            <div className="cartChild_second" style={{display:'flex',flexWrap:'wrap',flexDirection:'column',gap:'5px'}}>
+              <Button className='btn_style' onClick={()=> handleAccepteBtn(item)} text='accept'/>
+              <Button className='btn_style' onClick={()=> handleDeleteBtn(item)} text='delete'/>
+            </div>
           </div>
-          <div className="cartChild_second" style={{display:'flex',flexWrap:'wrap',flexDirection:'column',gap:'5px'}}>
-            <Button className='btn_style' onClick={()=> handleAccepteBtn(item)} text='accept'/>
-            <Button className='btn_style' onClick={()=> handleDeleteBtn(item)} text='delete'/>
-          </div>
-        </div>
-      ))
+        ))
 
-      :
+        :
 
-      <Alert severity="info">No friend request found</Alert>
+        <Alert severity="info">No friend request found</Alert>
       }
     </div>
-  </div>
+    </div>
   )
 }
 
