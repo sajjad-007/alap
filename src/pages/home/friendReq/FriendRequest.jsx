@@ -1,6 +1,6 @@
 import CartHeading from '../../../components/utilities/CartHeading'
 import { BsThreeDotsVertical } from 'react-icons/bs'
-import { Avatar } from '@mui/material'
+import { Alert, Avatar } from '@mui/material'
 import CartSubHead from '../../../components/utilities/CartSubHead'
 import CartComment from '../../../components/utilities/CartComment'
 import Button from '../../../components/utilities/Button'
@@ -12,7 +12,7 @@ import '../cartList/cartList.css'
 const FriendRequest = () => {
   const db = getDatabase();
   const data = useSelector(state => state.loginUserData.value)
-  console.log(data);
+  // console.log(data);
   const [friendReq,setFriendReq] = useState([])
 
   // friend Request firebase read operation
@@ -40,9 +40,9 @@ const FriendRequest = () => {
       sendername: acceptInfo.whosendName,
       senderemail: acceptInfo.whosendemail,
       senderid: acceptInfo.whosendid,
-      recivername: data.displayName,
-      reciveremail: data.email,
-      reciverid: data.uid,
+      receivername: data.displayName,
+      receiveremail: data.email,
+      receiverid: data.uid,
     }).then(()=>{
       remove(ref(db,'friendRequest/' + acceptInfo.id))
     })
@@ -55,7 +55,10 @@ const FriendRequest = () => {
       <BsThreeDotsVertical style={{fontSize:'20px',color:'#5F35F5'}}/>
     </div>
     <div className="cartItembox">
-      {friendReq.map((item,index)=>(
+      
+      {friendReq.length > 0
+      ?
+      friendReq.map((item,index)=>(
         <div key={index} className="cartItemChild"style={{display:'flex', gap:'70px'}} >
           <div className="cartChild_first">
             <div className="first_main" style={{display:'flex', gap:'15px'}}>
@@ -79,6 +82,10 @@ const FriendRequest = () => {
           </div>
         </div>
       ))
+
+      :
+
+      <Alert severity="info">No friend request found</Alert>
       }
     </div>
   </div>

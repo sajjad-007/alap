@@ -8,6 +8,7 @@ import CartComment from '../../../components/utilities/CartComment';
 import { FaSquarePlus } from "react-icons/fa6";
 import { useSelector, useDispatch } from 'react-redux'
 import { getDatabase, ref, onValue,push, set } from "firebase/database";
+import { Alert } from '@mui/material';
 
 
 const CartList = () => {
@@ -51,7 +52,7 @@ const CartList = () => {
   },[])
 
   //friends request list
-  useEffect(()=>{
+  useEffect(() => {
     const usersRef = ref(db, 'friendRequest' );
     onValue(usersRef, (snapshot) => {
       let array = []
@@ -72,7 +73,9 @@ const CartList = () => {
         <BsThreeDotsVertical style={{fontSize:'20px',color:'#5F35F5'}}/>
       </div>
       <div className="cartItembox">
-        {userList.map((item,index)=>(
+        {userList.length > 0 
+        ?
+        userList.map((item,index)=>(
           <div key={index} className="cartItemChild">
             <div className="cartChild_first">
               <div className="first_main" style={{display:'flex', gap:'15px'}}>
@@ -99,6 +102,8 @@ const CartList = () => {
             </div>
           </div>
         ))
+        :
+        <Alert severity="info">No friend request found</Alert>
         }
       </div>
     </div>

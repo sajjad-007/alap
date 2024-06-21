@@ -74,9 +74,9 @@ const Sidebar = () => {
               </li>
             </ul>
           </div>
-          <div className="sidebar_logout"> 
-            <span style={{cursor:'pointer'}} onClick={handleSignOut}> 
-              <ImExit/> 
+          <div className="sidebar_logout" > 
+            <span style={{cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}} onClick={handleSignOut}> 
+              <ImExit /> 
             </span>
           </div>
         </div>

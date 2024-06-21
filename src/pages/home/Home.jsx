@@ -1,6 +1,7 @@
 import React from 'react'
 import CartList from './cartList/CartList'
 import FriendRequest from './friendReq/FriendRequest'
+import FriendsList from './friendsList/FriendsList'
 
 const Home = () => {
   return (
@@ -10,6 +11,9 @@ const Home = () => {
       </div>
       <div>
         <FriendRequest/>
+      </div>
+      <div>
+        <FriendsList/>
       </div>
     </div>
   )
