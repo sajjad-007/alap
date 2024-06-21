@@ -16,6 +16,7 @@ const CartList = () => {
   const db = getDatabase();
   const [friendReqList,setFriendReqList] = useState([])
   const [userList,setUserList] = useState([])
+  const [friendBtn,setFriendBtn] = useState([])
   // friend request send
   let handleFriendReq = (item) => {
     // console.log(item);
@@ -66,6 +67,21 @@ const CartList = () => {
   });
   },[])
 
+  // friend btn
+  useEffect(() => {
+    const usersRef = ref(db, 'friendsList' );
+    onValue(usersRef, (snapshot) => {
+      let array = []
+      snapshot.forEach( (item) => {
+        if (data.uid == item.val().senderid || data.uid == item.val().receiverid) { 
+          array.push(item.val().senderid + item.val().receiverid);
+        }
+      })
+      setFriendBtn(array);
+  });
+  },[])
+  console.log(friendBtn);
+
   return (
     <div className='cartList'>
       <div style={{display:'flex',alignItems:'center', justifyContent:'space-between'}}>
@@ -97,7 +113,11 @@ const CartList = () => {
                 <button className='btn_style'>Cancle</button>
                 // ekhon friend request pathle add button change hoye cancle button show korbe
                 :
-                <FaSquarePlus onClick={()=>handleFriendReq(item)}/>
+                  friendBtn.includes(data.uid + item.id) || friendBtn.includes(item.id + data.uid)
+                  ?
+                  <button className='btn_style'>friend</button>
+                  :
+                  <FaSquarePlus onClick={()=>handleFriendReq(item)}/>
               }
             </div>
           </div>
