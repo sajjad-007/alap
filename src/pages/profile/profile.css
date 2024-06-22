@@ -1,0 +1,10 @@
+.profile_mail{
+    width: 90%;
+    height: 250px;
+    background-color: rgba(233, 190, 190, 0.668);
+    border-radius: 20px;
+}
+.profile_name{
+    font-size: 25px;
+    font-weight: 700;
+}
