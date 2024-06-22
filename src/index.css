@@ -18,9 +18,13 @@ a{
     font-size: 20.641px;
     font-weight: 600;
 }
+*::-webkit-scrollbar {
+    background-color: transparent;
+    width: 0px;
+}
 .btn_style {
     color: #FFF;
-    font-size: 20px;
+    font-size: 15px;
     font-weight: 600;
     line-height: normal;
     width: 87px;

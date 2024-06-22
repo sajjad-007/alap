@@ -69,6 +69,7 @@ const Login = () => {
 
   const db = getDatabase();
   const [loader , setLoader] = useState(false)
+  const data = useSelector(state => state.loginUserData.value)
   const [forgetpass,setForgetpass] = useState("")
   const auth = getAuth();
   const provider = new GoogleAuthProvider();
