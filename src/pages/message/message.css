@@ -68,7 +68,12 @@
 
 .msg_sender{
     display: flex;
+    flex-direction: column;
+    align-items: end;
     justify-content: end;
+}
+.msg_sender span{
+    font-size: 10px;
 }
 .msg_sender p{
     color: white;
@@ -77,10 +82,20 @@
     display: inline-block;
     background-color: #5F35F5;
     padding: 14px;
-    max-width: 480px;
+    max-width: 80%;
     margin-top: 5px;
     border-radius: 14px;
     margin-bottom: 10px;
+}
+.msg_receiver{
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: start;
+    gap: 4px;
+}
+.msg_receiver span {
+    font-size: 10px;
 }
 .msg_receiver p {
     color: white;
@@ -88,10 +103,9 @@
     /* text-align: justify; */
     display: inline-block;
     background-color: rgb(121, 123, 133);
-    padding: 12px;
-    max-width: 480px;
+    padding: 14px;
+    max-width: 80%;
     margin-top: 5px;
     border-radius: 14px;
-    margin-bottom: 10px;
+    /* margin-bottom: 10px; */
 }
-

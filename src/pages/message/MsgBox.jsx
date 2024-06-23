@@ -1,10 +1,12 @@
-import { Alert, Avatar } from '@mui/material'
+import { Alert, Avatar, TextField } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { BsThreeDotsVertical } from 'react-icons/bs'
 import { useSelector } from 'react-redux'
 import InputBox from '../../components/utilities/InputBox'
 import { BiLogoTelegram } from "react-icons/bi";
 import { getDatabase,onValue,push, ref, set } from 'firebase/database'
+import moment from 'moment/moment';
+import EmojiPicker from 'emoji-picker-react';
 
 const MsgBox = () => {
     const db = getDatabase();
@@ -12,11 +14,12 @@ const MsgBox = () => {
     const activeChatData = useSelector(state => state.activeUserData.value)
     const [msgText,setMsgText] = useState('')
     const [allMsg,setAllMsg] = useState('')
+    const [emojiShow,setEmojiShow] = useState(false)
 
     let handleInputBox = (e) =>{
         setMsgText(e.target.value);
     }
-    //submit msg
+    // submit msg
     let handleMsgSubmit = () =>{
         console.log(msgText);
         set(push(ref(db, 'message')),{
@@ -38,7 +41,8 @@ const MsgBox = () => {
                     ? activeChatData.senderemail
                     : activeChatData.receiveremail,
             // message update        
-            message : msgText ,     
+            message : msgText ,  
+            date: `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getMilliseconds()}`,   
         })
     }
     // submit msg to chatbox
@@ -47,6 +51,7 @@ const MsgBox = () => {
         onValue(usersRef, (snapshot) => {
           let array = []
           snapshot.forEach( (item) => {
+            // activeid holo jake click korchi tar id condition
             let activeid = (data.uid == activeChatData?.senderid) ? (activeChatData?.receiverid) : (activeChatData?.senderid)
             if ((item.val().senderid == data.uid && item.val().receiverid == activeid) || (item.val().receiverid == data.uid && item.val().senderid == activeid )) {
                 array.push({...item.val(), id: item.key});
@@ -56,7 +61,12 @@ const MsgBox = () => {
           setAllMsg(array);
       });
     },[activeChatData])
-    console.log(allMsg);
+    // console.log(allMsg);
+
+    //handle emoji
+    let handleEmoji = () =>{
+        setEmojiShow(!emojiShow)
+    }
     // Check if data and activeChatData are defined
     // if (!data || !activeChatData) {
     //     return <div> loading </div>
@@ -87,28 +97,51 @@ const MsgBox = () => {
                 </div>
             </div>
             <div className="msg_body">
-                {allMsg.map((item,index)=>(
-                    item.senderid == data.uid
+                {allMsg?.map((item,index)=>(
+                    item?.senderid == data?.uid
                     ?
                     <div key={index} className="msg_sender">
                         <p>{item.message}</p>
+                        <span>
+                            {moment(item.date, "YYYYMMDD hh:mm").fromNow()}
+                        </span>
                     </div>
                     :
-                    <div className="msg_receiver">
+                    <div key={index} className="msg_receiver">
                         <p>{item.message}</p>
+                        <span>
+                            {moment(item.date, "YYYYMMDD hh:mm").fromNow()}
+                        </span>
                     </div>
                 ))
 
                 }
             </div>
             <div className="msg_footer" style={{display:'flex',alignItems:'center',borderRadius:'10px' ,gap:'10px',}}>
-                <InputBox onChange={handleInputBox} label='Write something ....' styling='msg_input'/>
+                {/* <InputBox onChange={handleInputBox} label='Write something ....' styling='msg_input'/> */}
+                <TextField
+                    id="outlined-multiline-flexible"
+                    label="Write something...."
+                    multiline
+                    maxRows={1}
+                    onChange={handleInputBox}
+                    className='msg_input'
+                    style={{width:'400px'}}
+                />
                 {msgText.length > 0  
                     &&
                     <button onClick={handleMsgSubmit} className='msgBtn'>
                         <BiLogoTelegram />
                     </button>
                 }
+                <div>
+                    <button onClick={handleEmoji} style={{padding:'15px 16px' ,borderRadius:'10px',backgroundColor:'#5F35F5',border:'none',color:'white',fontSize:'15px',cursor:'pointer'}}>
+                        Emoji
+                    </button>
+                    <div style={{position:'absolute',left:'300px',bottom:'90px'}}>
+                            <EmojiPicker open={emojiShow}/>
+                    </div>
+                </div>
             </div>
         </div>
         :
