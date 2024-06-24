@@ -11,6 +11,9 @@ import ScrollToBottom from 'react-scroll-to-bottom';
 import { AudioRecorder } from 'react-audio-voice-recorder';
 import { getStorage, ref as sref, uploadBytes,getDownloadURL,uploadString  } from "firebase/storage";
 import { AiFillLike } from 'react-icons/ai'
+import { MdDelete } from 'react-icons/md'
+import { IoSend } from "react-icons/io5";
+
 
 
 const MsgBox = () => {
@@ -255,7 +258,7 @@ const MsgBox = () => {
                     maxRows={1}
                     onChange={handleInputBox}
                     className='msg_input'
-                    style={{width:'350px',}}
+                    style={{width:'300px',}}
                     value={msgText }
                     onKeyUp={handleEnter}
                 />
@@ -269,6 +272,7 @@ const MsgBox = () => {
                             <AiFillLike />
                         </button>
                 }
+                {/* emoji */}
                 <div>
                     <button onClick={handleEmoji} style={{padding:'12px' ,borderRadius:'10px',backgroundColor:'#5F35F5',border:'none',color:'white',fontSize:'15px',cursor:'pointer'}}>
                         Emoji
@@ -290,20 +294,20 @@ const MsgBox = () => {
                     // downloadFileExtension="webm"
                 />
                 {audioUrl && (
-                      <div className="voice_send_wrapper">
-                        <audio controls src={audioUrl}></audio>
+                      <div className="voice_send_wrapper wrap">
+                        <audio controls src={audioUrl} className='audio'></audio>
                         <div className='voice_btn_wrapper'>
                             <button
-                              className=""
+                              className="voice_btn"
                               onClick={() => setAudioUrl("")}
                             >
-                              Delete
+                              <MdDelete />
                             </button>
                             <button
                               onClick={handleAudioUpload}
-                              className=""
+                              className="voice_btn"
                             >
-                              Send
+                              <IoSend />
                             </button>
                         </div>
                       </div>

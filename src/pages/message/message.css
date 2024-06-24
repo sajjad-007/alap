@@ -130,5 +130,27 @@
     color: white;
 }
 .audio-recorder {
-    background-color: #b8abff;
+    background-color: #6b5bba;
+}
+.voice_btn_wrapper{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+.voice_btn {
+    background-color: #5F35F5;
+    color: whitesmoke;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+    padding: 5px;
+}
+.voice_btn svg{
+    font-size: 20px;
+    display: inline-block;
 }
