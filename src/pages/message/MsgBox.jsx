@@ -9,15 +9,9 @@ import moment from 'moment/moment';
 import EmojiPicker from 'emoji-picker-react';
 import ScrollToBottom from 'react-scroll-to-bottom';
 import { AudioRecorder } from 'react-audio-voice-recorder';
+import { getStorage, ref as sref, uploadBytes,getDownloadURL,uploadString  } from "firebase/storage";
 
-const addAudioElement = (blob) => {
-    const url = URL.createObjectURL(blob);
-    const audio = document.createElement("audio");
-    audio.src = url;
-    audio.controls = true;
-    // console.log(url);
-    // document.body.appendChild(audio);
-};
+
 const MsgBox = () => {
     const db = getDatabase();
     const data = useSelector(state => state.loginUserData.value)
@@ -25,7 +19,21 @@ const MsgBox = () => {
     const [msgText,setMsgText] = useState('')
     const [allMsg,setAllMsg] = useState('')
     const [emojiShow,setEmojiShow] = useState(false)
+    const [blob,setBlob] = useState('')
+    const [audioUrl,setAudioUrl] = useState('')
+    const [voicebox, setVoicebox] = useState(true)
+    const storage = getStorage();
 
+
+    const addAudioElement = (blob) => {
+        const url = URL.createObjectURL(blob);
+        const audio = document.createElement("audio");
+        audio.src = url;
+        audio.controls = true;
+        setAudioUrl(url);
+        setBlob(blob);
+        // document.body.appendChild(audio);
+    };
     let handleInputBox = (e) =>{
         setMsgText(e.target.value);
     }
@@ -80,6 +88,8 @@ const MsgBox = () => {
     // handle emoji click
     let handleEmojiClick = (e) => {
         setMsgText(msgText + e.emoji);
+        
+
     }
     // handle input inside enter
     let handleEnter = (e) =>{
@@ -91,7 +101,7 @@ const MsgBox = () => {
                 senderemail : data.email,
                 // receiver
                 receiverid :
-                    (activeChatData.receiverid == data.uid )
+                    ( activeChatData.receiverid == data.uid )
                         ? activeChatData.senderid 
                         : activeChatData.receiverid,
                 receivername:
@@ -99,7 +109,7 @@ const MsgBox = () => {
                         ? activeChatData.sendername
                         : activeChatData.receivername,
                 receiveremail :
-                    (activeChatData.receiverid == data.uid)
+                    ( activeChatData.receiverid == data.uid )
                         ? activeChatData.senderemail
                         : activeChatData.receiveremail,
                 // message update        
@@ -108,6 +118,38 @@ const MsgBox = () => {
             })
         }
     }
+    //handle audio upload
+    let handleAudioUpload = () => {
+        const audioStorageRef = sref(storage, 'voice/'+ Date.now());
+        uploadBytes(audioStorageRef, blob).then((snapshot) => {
+          getDownloadURL(audioStorageRef).then((downloadURL) => {
+            set(push(ref(db, "message")), {
+             //sender
+            senderid : data.uid,
+            sendername : data.displayName,
+            senderemail : data.email,
+            // receiver
+            receiverid :
+                (activeChatData.receiverid == data.uid )
+                    ? activeChatData.senderid 
+                    : activeChatData.receiverid,
+            receivername:
+                ( activeChatData.receiverid == data.uid )
+                    ? activeChatData.sendername
+                    : activeChatData.receivername,
+            receiveremail :
+                (activeChatData.receiverid == data.uid)
+                    ? activeChatData.senderemail
+                    : activeChatData.receiveremail,
+            // message update        
+            audio: downloadURL, 
+            date: `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getMilliseconds()}`,   
+            }).then(() => {
+              setAudioUrl("");
+            });
+          });
+        });
+      };
     // handle like btn
     // let handleLikeBtn = () =>{
     //     // setMsgText(`U+1F44D`);
@@ -146,15 +188,24 @@ const MsgBox = () => {
                     (item.senderid == data.uid)
                     ?
                     <div key={index} className="msg_sender">
-                        <p>{item.message}</p>                  
-                        {/* // <p style={{background:'none'}}>{item.message}</p> */}
+                        {item.message
+                        ?    
+                            <p>{item.message}</p>                  
+                        :
+                        <audio className='senderaudio' controls src={item.audio}/>
+                        }
                         <span>
                             {moment(item.date, "YYYYMMDD hh:mm").fromNow()}
                         </span>
                     </div>
                     :
                     <div key={index} className="msg_receiver">
-                        <p>{item.message}</p>
+                        {item.message
+                        ?    
+                            <p>{item.message}</p>                  
+                        :
+                        <audio className='receiveraudio' controls src={item.audio}/>
+                        }
                         <span>
                             {moment(item.date, "YYYYMMDD hh:mm").fromNow()}
                         </span>
@@ -171,7 +222,7 @@ const MsgBox = () => {
                     maxRows={1}
                     onChange={handleInputBox}
                     className='msg_input'
-                    style={{width:'400px'}}
+                    style={{width:'350px',}}
                     value={msgText}
                     onKeyUp={handleEnter}
                 />
@@ -191,15 +242,35 @@ const MsgBox = () => {
                         </span>
                     </div>
                 </div>
+                {/* //audio url */}
                 <AudioRecorder 
                     onRecordingComplete={addAudioElement}
                     audioTrackConstraints={{
                         noiseSuppression: true,
                         echoCancellation: true,
                     }} 
-                    downloadOnSavePress={true}
-                    downloadFileExtension="webm"
+                    // downloadOnSavePress={true}
+                    // downloadFileExtension="webm"
                 />
+                {audioUrl && (
+                      <div className="voice_send_wrapper">
+                        <audio controls src={audioUrl}></audio>
+                        <div className='voice_btn_wrapper'>
+                            <button
+                              className=""
+                              onClick={() => setAudioUrl("")}
+                            >
+                              Delete
+                            </button>
+                            <button
+                              onClick={handleAudioUpload}
+                              className=""
+                            >
+                              Send
+                            </button>
+                        </div>
+                      </div>
+                    )}
                 {/* <div>
                     <button onClick={handleLikeBtn}>
                         like
