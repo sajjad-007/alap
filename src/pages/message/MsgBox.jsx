@@ -10,6 +10,7 @@ import EmojiPicker from 'emoji-picker-react';
 import ScrollToBottom from 'react-scroll-to-bottom';
 import { AudioRecorder } from 'react-audio-voice-recorder';
 import { getStorage, ref as sref, uploadBytes,getDownloadURL,uploadString  } from "firebase/storage";
+import { AiFillLike } from 'react-icons/ai'
 
 
 const MsgBox = () => {
@@ -17,7 +18,7 @@ const MsgBox = () => {
     const data = useSelector(state => state.loginUserData.value)
     const activeChatData = useSelector(state => state.activeUserData.value)
     const [msgText,setMsgText] = useState('')
-    const [allMsg,setAllMsg] = useState('')
+    const [allMsg,setAllMsg] = useState([])
     const [emojiShow,setEmojiShow] = useState(false)
     const [blob,setBlob] = useState('')
     const [audioUrl,setAudioUrl] = useState('')
@@ -58,9 +59,13 @@ const MsgBox = () => {
                 (activeChatData.receiverid == data.uid)
                     ? activeChatData.senderemail
                     : activeChatData.receiveremail,
+            
             // message update        
             message : msgText ,  
+            emoji : `emoji`,
             date: `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getMilliseconds()}`,   
+        }).then(()=>{
+            setMsgText('')
         })
     }
     // submit msg to chatbox (firebase read)
@@ -87,9 +92,7 @@ const MsgBox = () => {
     }
     // handle emoji click
     let handleEmojiClick = (e) => {
-        setMsgText(msgText + e.emoji);
-        
-
+        setMsgText(msgText + e.emoji);  
     }
     // handle input inside enter
     let handleEnter = (e) =>{
@@ -149,11 +152,32 @@ const MsgBox = () => {
             });
           });
         });
-      };
+    };    
     // handle like btn
-    // let handleLikeBtn = () =>{
-    //     // setMsgText(`U+1F44D`);
-    // }
+    let handleLikeBtn = () =>{
+        set(push(ref(db, 'message')),{
+                //sender
+                senderid : data.uid,
+                sendername : data.displayName,
+                senderemail : data.email,
+                // receiver
+                receiverid :
+                    ( activeChatData.receiverid == data.uid )
+                        ? activeChatData.senderid 
+                        : activeChatData.receiverid,
+                receivername:
+                    ( activeChatData.receiverid == data.uid )
+                        ? activeChatData.sendername
+                        : activeChatData.receivername,
+                receiveremail :
+                    ( activeChatData.receiverid == data.uid )
+                        ? activeChatData.senderemail
+                        : activeChatData.receiveremail,
+                // like update        
+                like : `&#128077;` ,  
+                date: `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getMilliseconds()}`,   
+            })
+    }
     // Check if data and activeChatData are defined
     // if (!data || !activeChatData) {
     //     return <div> loading </div>
@@ -187,12 +211,17 @@ const MsgBox = () => {
                 {allMsg.map((item,index)=>(
                     (item.senderid == data.uid)
                     ?
-                    <div key={index} className="msg_sender">
+                    <div key={index} className="msg_sender">           
                         {item.message
+                    
                         ?    
-                            <p>{item.message}</p>                  
+                            <p>{item.message}</p>    
                         :
-                        <audio className='senderaudio' controls src={item.audio}/>
+                            item.audio 
+                            ?
+                                <audio className='senderaudio' controls src={item.audio}/>
+                            :
+                                <div className='like_btn' dangerouslySetInnerHTML={{__html: item.like}}></div>
                         }
                         <span>
                             {moment(item.date, "YYYYMMDD hh:mm").fromNow()}
@@ -204,7 +233,11 @@ const MsgBox = () => {
                         ?    
                             <p>{item.message}</p>                  
                         :
-                        <audio className='receiveraudio' controls src={item.audio}/>
+                            item.audio
+                            ?    
+                                <audio className='receiveraudio' controls src={item.audio}/>
+                            :   
+                                <div className='like_btn' dangerouslySetInnerHTML={{__html: item.like}}></div>
                         }
                         <span>
                             {moment(item.date, "YYYYMMDD hh:mm").fromNow()}
@@ -223,22 +256,26 @@ const MsgBox = () => {
                     onChange={handleInputBox}
                     className='msg_input'
                     style={{width:'350px',}}
-                    value={msgText}
+                    value={msgText }
                     onKeyUp={handleEnter}
                 />
                 {msgText.length > 0  
-                    &&
-                    <button onClick={handleMsgSubmit} className='msgBtn'>
-                        <BiLogoTelegram />
-                    </button>
+                    ?
+                        <button onClick={handleMsgSubmit}  className='msgBtn'>
+                            <BiLogoTelegram />
+                        </button>
+                    :
+                        <button className='msgBtn like' onClick={handleLikeBtn}>
+                            <AiFillLike />
+                        </button>
                 }
                 <div>
-                    <button onClick={handleEmoji} style={{padding:'15px 16px' ,borderRadius:'10px',backgroundColor:'#5F35F5',border:'none',color:'white',fontSize:'15px',cursor:'pointer'}}>
+                    <button onClick={handleEmoji} style={{padding:'12px' ,borderRadius:'10px',backgroundColor:'#5F35F5',border:'none',color:'white',fontSize:'15px',cursor:'pointer'}}>
                         Emoji
                     </button>
                     <div className='emoji' style={{position:'absolute',left:'300px',bottom:'90px'}}>
                         <span>
-                            <EmojiPicker open={emojiShow} height={450} width={300} onEmojiClick={handleEmojiClick}/>
+                            <EmojiPicker   open={emojiShow} height={450} width={300} onEmojiClick={handleEmojiClick} />
                         </span>
                     </div>
                 </div>
@@ -271,11 +308,6 @@ const MsgBox = () => {
                         </div>
                       </div>
                     )}
-                {/* <div>
-                    <button onClick={handleLikeBtn}>
-                        like
-                    </button>
-                </div> */}
             </div>
         </div>
         :

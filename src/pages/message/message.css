@@ -63,7 +63,7 @@
     color: white;
     border-radius: 10px;
     border: none;
-    font-size: 26px;
+    font-size: 20px;
     cursor: pointer;
 }
 
@@ -121,3 +121,14 @@
      .receiveraudio::-webkit-media-controls-panel {
      background-color: rgb(222, 218, 218);
     }
+.like_btn {
+    font-size: 30px;
+    color: 0x1f7e3;
+}
+.msgBtn.like svg{
+    font-size: 24px;
+    color: white;
+}
+.audio-recorder {
+    background-color: #b8abff;
+}
