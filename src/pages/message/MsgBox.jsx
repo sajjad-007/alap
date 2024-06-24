@@ -7,7 +7,17 @@ import { BiLogoTelegram } from "react-icons/bi";
 import { getDatabase,onValue,push, ref, set } from 'firebase/database'
 import moment from 'moment/moment';
 import EmojiPicker from 'emoji-picker-react';
+import ScrollToBottom from 'react-scroll-to-bottom';
+import { AudioRecorder } from 'react-audio-voice-recorder';
 
+const addAudioElement = (blob) => {
+    const url = URL.createObjectURL(blob);
+    const audio = document.createElement("audio");
+    audio.src = url;
+    audio.controls = true;
+    // console.log(url);
+    // document.body.appendChild(audio);
+};
 const MsgBox = () => {
     const db = getDatabase();
     const data = useSelector(state => state.loginUserData.value)
@@ -19,9 +29,9 @@ const MsgBox = () => {
     let handleInputBox = (e) =>{
         setMsgText(e.target.value);
     }
-    // submit msg
+    // submit msg firebase write
     let handleMsgSubmit = () =>{
-        console.log(msgText);
+        // console.log(msgText);
         set(push(ref(db, 'message')),{
             //sender
             senderid : data.uid,
@@ -45,13 +55,13 @@ const MsgBox = () => {
             date: `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getMilliseconds()}`,   
         })
     }
-    // submit msg to chatbox
+    // submit msg to chatbox (firebase read)
     useEffect(()=>{
         const usersRef = ref(db, 'message' );
         onValue(usersRef, (snapshot) => {
           let array = []
           snapshot.forEach( (item) => {
-            // activeid holo jake click korchi tar id condition
+            // activeid holo jake click korchi tar idr condition
             let activeid = (data.uid == activeChatData?.senderid) ? (activeChatData?.receiverid) : (activeChatData?.senderid)
             if ((item.val().senderid == data.uid && item.val().receiverid == activeid) || (item.val().receiverid == data.uid && item.val().senderid == activeid )) {
                 array.push({...item.val(), id: item.key});
@@ -63,10 +73,45 @@ const MsgBox = () => {
     },[activeChatData])
     // console.log(allMsg);
 
-    //handle emoji
+    // handle emoji
     let handleEmoji = () =>{
         setEmojiShow(!emojiShow)
     }
+    // handle emoji click
+    let handleEmojiClick = (e) => {
+        setMsgText(msgText + e.emoji);
+    }
+    // handle input inside enter
+    let handleEnter = (e) =>{
+        if (e.key == 'Enter') {
+            set(push(ref(db, 'message')),{
+                //sender
+                senderid : data.uid,
+                sendername : data.displayName,
+                senderemail : data.email,
+                // receiver
+                receiverid :
+                    (activeChatData.receiverid == data.uid )
+                        ? activeChatData.senderid 
+                        : activeChatData.receiverid,
+                receivername:
+                    ( activeChatData.receiverid == data.uid )
+                        ? activeChatData.sendername
+                        : activeChatData.receivername,
+                receiveremail :
+                    (activeChatData.receiverid == data.uid)
+                        ? activeChatData.senderemail
+                        : activeChatData.receiveremail,
+                // message update        
+                message : msgText ,  
+                date: `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getMilliseconds()}`,   
+            })
+        }
+    }
+    // handle like btn
+    // let handleLikeBtn = () =>{
+    //     // setMsgText(`U+1F44D`);
+    // }
     // Check if data and activeChatData are defined
     // if (!data || !activeChatData) {
     //     return <div> loading </div>
@@ -96,12 +141,13 @@ const MsgBox = () => {
                     <BsThreeDotsVertical style={{fontSize:'20px',color:'#5F35F5',cursor:'pointer'}}/>
                 </div>
             </div>
-            <div className="msg_body">
-                {allMsg?.map((item,index)=>(
-                    item?.senderid == data?.uid
+            <ScrollToBottom className="msg_body">
+                {allMsg.map((item,index)=>(
+                    (item.senderid == data.uid)
                     ?
                     <div key={index} className="msg_sender">
-                        <p>{item.message}</p>
+                        <p>{item.message}</p>                  
+                        {/* // <p style={{background:'none'}}>{item.message}</p> */}
                         <span>
                             {moment(item.date, "YYYYMMDD hh:mm").fromNow()}
                         </span>
@@ -113,20 +159,21 @@ const MsgBox = () => {
                             {moment(item.date, "YYYYMMDD hh:mm").fromNow()}
                         </span>
                     </div>
-                ))
+                    ))
 
                 }
-            </div>
+            </ScrollToBottom>
             <div className="msg_footer" style={{display:'flex',alignItems:'center',borderRadius:'10px' ,gap:'10px',}}>
                 {/* <InputBox onChange={handleInputBox} label='Write something ....' styling='msg_input'/> */}
                 <TextField
                     id="outlined-multiline-flexible"
-                    label="Write something...."
                     multiline
                     maxRows={1}
                     onChange={handleInputBox}
                     className='msg_input'
                     style={{width:'400px'}}
+                    value={msgText}
+                    onKeyUp={handleEnter}
                 />
                 {msgText.length > 0  
                     &&
@@ -138,10 +185,26 @@ const MsgBox = () => {
                     <button onClick={handleEmoji} style={{padding:'15px 16px' ,borderRadius:'10px',backgroundColor:'#5F35F5',border:'none',color:'white',fontSize:'15px',cursor:'pointer'}}>
                         Emoji
                     </button>
-                    <div style={{position:'absolute',left:'300px',bottom:'90px'}}>
-                            <EmojiPicker open={emojiShow}/>
+                    <div className='emoji' style={{position:'absolute',left:'300px',bottom:'90px'}}>
+                        <span>
+                            <EmojiPicker open={emojiShow} height={450} width={300} onEmojiClick={handleEmojiClick}/>
+                        </span>
                     </div>
                 </div>
+                <AudioRecorder 
+                    onRecordingComplete={addAudioElement}
+                    audioTrackConstraints={{
+                        noiseSuppression: true,
+                        echoCancellation: true,
+                    }} 
+                    downloadOnSavePress={true}
+                    downloadFileExtension="webm"
+                />
+                {/* <div>
+                    <button onClick={handleLikeBtn}>
+                        like
+                    </button>
+                </div> */}
             </div>
         </div>
         :
