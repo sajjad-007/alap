@@ -123,7 +123,7 @@ const Registration = () => {
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={0}>
           <Grid item xs={6} style={{display:'flex', alignItems:'center',justifyContent:'center'}}>
-            <div className='log_main' style={{marginTop:'20px', marginBottom:'60px', padding:'20px'}}>
+            <div className='log_main' style={{padding:'20px'}}>
               <LogHead level="h2">
                 Get started with easily register
               </LogHead>
@@ -187,7 +187,7 @@ const Registration = () => {
             </div>
           </Grid>
           <Grid item xs={6} >
-            <div style={{backgroundColor:"red", width:"100%", height:"100vh"}} className='reg_img'>
+            <div style={{width:"100%", height:"120vh"}} className='reg_img'>
               <Images source={RegImg} alt='Not Found' />
             </div>
           </Grid>

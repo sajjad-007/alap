@@ -121,6 +121,8 @@ const MsgBox = () => {
                 // message update        
                 message : msgText ,  
                 date: `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getMilliseconds()}`,   
+            }).then(()=>{
+                setMsgText("")
             })
         }
     }
@@ -315,7 +317,7 @@ const MsgBox = () => {
             </div>
         </div>
         :
-        <Alert severity="info">No user found</Alert>  
+        <Alert severity="info">Select a User</Alert>  
         }
     </div>
   )
